@@ -38,8 +38,8 @@
                             <!-- <th>cus_id</th> -->
                             <th>project_status</th>
                             <th></th>
-                            <th></th>
-                            <th></th>
+                            <!-- <th></th>
+                            <th></th> -->
                         </tr>
                     </thead>
                     <tbody>

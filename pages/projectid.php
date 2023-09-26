@@ -35,7 +35,6 @@ include('../components/header.php');
                                 <div class="col-12 col-md-3 col-lg-3">
                                     <label for=""><b>รหัสโครงการ</b></label>
                                     <p id="projectid"></p>
-
                                 </div>
                                 <div class="col-12 col-md-3 col-lg-3">
                                     <label for=""><b>ชื่อโครงการ :</b></label>
@@ -96,7 +95,6 @@ include('../components/header.php');
                                     </tr>
                                 </tfoot>
                             </table>
-
                         </div>
                     </div>
                 </div>

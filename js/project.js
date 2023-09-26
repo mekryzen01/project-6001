@@ -223,18 +223,18 @@ function fetchData(funcName, data = {}) {
                             </form>`;
                         }
                     },
-                    {
-                        data: null,
-                        render: function (data, type, row) {
-                            return `<button class="btn btn-primary btn-edit" data-id="${data.project_id}">Edit</button>`;
-                        }
-                    },
-                    {
-                        data: null,
-                        render: function (data, type, row) {
-                            return `<button class="btn btn-danger btn-delete" data-id="${data.project_id}">Delete</button>`;
-                        }
-                    }
+                    // {
+                    //     data: null,
+                    //     render: function (data, type, row) {
+                    //         return `<button class="btn btn-primary btn-edit" data-id="${data.project_id}">Edit</button>`;
+                    //     }
+                    // },
+                    // {
+                    //     data: null,
+                    //     render: function (data, type, row) {
+                    //         return `<button class="btn btn-danger btn-delete" data-id="${data.project_id}">Delete</button>`;
+                    //     }
+                    // }
                     ]
                 });
             } else if (funcName === "get_project_status1") {
