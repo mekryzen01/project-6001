@@ -2,11 +2,11 @@ $(document).ready(function () {
     // Variables
 
     // Fetch Data
-    fetchData("get_projectbyid", { emp_id: localStorage.getItem("emp_id") });
+    fetchData("get_projectbyempid", { emp_id: localStorage.getItem("emp_id") });
     fetchData("get_project_status1", { emp_id: localStorage.getItem("emp_id") });
     fetchData("get_project_status2", { emp_id: localStorage.getItem("emp_id") });
     fetchData("get_stock");
-    fetchData("get_customer");
+    // fetchData("get_customer");
     fetchData("get_desc", { projectID: localStorage.getItem("ProjectID") });
 
     // Event Listeners
@@ -40,7 +40,16 @@ $(document).ready(function () {
     $('.btn-primary').click(function () {
         showModalproject();
     });
-
+    $.ajax({
+        url: '../servers/function',
+        type: 'POST',
+        data: {
+            function: "get_customer"
+        },
+        success: function (data) {
+            $('#Custormer').append(data);
+        }
+    });
     $('#saveprojectData').click(function () {
         const ProjectName = $('#ProjectName').val();
         const projectStart = $('#projectStart').val();
@@ -161,27 +170,13 @@ function fetchData(funcName, data = {}) {
         success: function (response) {
             let result = JSON.parse(response);
             // console.log(result);
-            if (funcName === "get_projectbyid") {
+            if (funcName === "get_projectbyempid") {
                 // console.log(result[0].countdata);
-                if (result && result.length > 0 && result[0].countdata != null) {
-                    $('#countproject').html(result[0].countdata);
+                if (result && result.length > 0 && result.countdata != null) {
+                    $('#countproject').html(result.countdata);
                 } else {
                     $('#countproject').html(0);
                 }
-                localStorage.setItem("ProjectID", result[0].project_id)
-                $("#nameproject").html(result[0].project_name)
-                $("#insertprojectname").val(result[0].project_name)
-                $("#statusbyid").html(result[0].project_status)
-                $("#startp").html(result[0].project_start)
-                $("#endp").html(result[0].project_end)
-                $("#customerp").html(result[0].cus_id)
-                $("#empp").html(result[0].employee)
-                $("#empname").val(result[0].employee)
-                $("#projectvalue").html(result[0].project_value)
-                $("#projectid").html(result[0].project_id)
-                $("#insertprojectid").val(result[0].project_id)
-                // $("#pid").val(result[0].project_id)
-                // สร้าง HTML สำหรับ Progress Spinners ในแต่ละแถวของ result
                 $('#project-table').DataTable({
                     data: result,
                     responsive: true,
@@ -223,20 +218,10 @@ function fetchData(funcName, data = {}) {
                             </form>`;
                         }
                     },
-                    // {
-                    //     data: null,
-                    //     render: function (data, type, row) {
-                    //         return `<button class="btn btn-primary btn-edit" data-id="${data.project_id}">Edit</button>`;
-                    //     }
-                    // },
-                    // {
-                    //     data: null,
-                    //     render: function (data, type, row) {
-                    //         return `<button class="btn btn-danger btn-delete" data-id="${data.project_id}">Delete</button>`;
-                    //     }
-                    // }
                     ]
                 });
+               
+               
             } else if (funcName === "get_project_status1") {
                 if (result[0] != null) {
                     $('#status1').html(result[0].countdata)

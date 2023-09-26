@@ -2,11 +2,54 @@
 include('connect.php');
 include('./central_function.php');
 // ดึง project by emp_id      
-if (isset($_POST['function']) && $_POST['function'] == 'get_projectbyid') {
+if (isset($_POST['function']) && $_POST['function'] == 'get_projectbyempid') {
     $empId = $_POST['emp_id'];
     $stm = $db->prepare("SELECT * FROM project WHERE emp_id = :emp_id");
     $stm->bindParam(':emp_id', $empId, PDO::PARAM_INT);
     $stm->execute();
+    $projects = $stm->fetchAll(PDO::FETCH_ASSOC);
+    $results = [];
+    $countData = count($projects);
+
+
+    foreach ($projects as $project) {
+        $datacustomer = fetchData($db, "SELECT * FROM customer WHERE cus_id = :id", ':id', $project['cus_id']);
+        $dataemployee = fetchData($db, "SELECT * FROM employee WHERE emp_id = :id", ':id', $project['emp_id']);
+
+        // $datahd = fetchData($db, "SELECT * FROM projcost_hd WHERE project_id = :id", ':id', $project['project_id']);
+        // $dataclose = fetchData($db, "SELECT * FROM project_close WHERE project_id = :id", ':id', $project['project_id']);
+        // $datadesc = fetchData($db, "SELECT * FROM projcost_desc WHERE projcost_saveid = :id", ':id', $datahd['projcost_saveid']);
+        if ($project['project_status'] == 1) {
+            $statusname = "อยู่ระหว่างดำเนินการ";
+        } elseif ($project['project_status'] == 2) {
+            $statusname = "ปิดโครงการ";
+        } else {
+            $statusname = "ยกเลิก";
+        }
+        $projectValue = is_numeric($project['project_value']) ? number_format($project['project_value'], 2) : "0.00";
+        $results[] = array(
+            "project_id" => $project['project_id'],
+            "project_name" => $project['project_name'],
+            "cus_id" => $datacustomer['cus_name'] . " " . $datacustomer['cus_sername'],
+            "project_start" => ConvertToThaiDate($project['project_start'], 0),
+            "project_end" => ConvertToThaiDate($project['project_end'], 0),
+            "project_value" => $projectValue,
+            "project_status" => $statusname,
+            "employee" => $dataemployee['emp_name'] . " " . $dataemployee['emp_sername'],
+            "countdata" => $countData
+        );
+    }
+
+    echo json_encode($results);
+}
+if (isset($_POST['function']) && $_POST['function'] == 'get_projectbyid') {
+    $empId = $_POST['emp_id'];
+    $projectID = $_POST['projectID'];
+    $stm = $db->prepare("SELECT * FROM project WHERE emp_id = :emp_id AND project_id = :id");
+    $stm->bindParam(':emp_id', $empId, PDO::PARAM_INT);
+    $stm->bindParam(':id', $projectID, PDO::PARAM_INT);
+    $stm->execute();
+    
     $projects = $stm->fetchAll(PDO::FETCH_ASSOC);
     $results = [];
     $countData = count($projects);
@@ -435,7 +478,6 @@ if (isset($_POST['function']) && $_POST['function'] == 'get_desc') {
             'product_cost' => $datastock['product_cost'],
             'desc_value' => $row['desc_value']
         );
-        
     }
 
     echo json_encode($results);

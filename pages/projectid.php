@@ -7,6 +7,33 @@ if (isset($_POST['detail'])) {
 }
 include('../components/header.php');
 ?>
+<script>
+    localStorage.setItem("ProjectID", <?php echo json_encode($projectid) ?>)
+    $.ajax({
+        type: "POST",
+        url: "../servers/function",
+        data: {
+            function: "get_projectbyid",
+            projectID: localStorage.getItem("ProjectID"),
+            emp_id: localStorage.getItem("emp_id")
+        },
+        success: function(data) {
+            let result = JSON.parse(data);
+            // console.log(result);
+            $("#nameproject").html(result[0].project_name)
+            $("#insertprojectname").val(result[0].project_name)
+            $("#statusbyid").html(result[0].project_status)
+            $("#startp").html(result[0].project_start)
+            $("#endp").html(result[0].project_end)
+            $("#customerp").html(result[0].cus_id)
+            $("#empp").html(result[0].employee)
+            $("#empname").val(result[0].employee)
+            $("#projectvalue").html(result[0].project_value)
+            $("#projectid").html(result[0].project_id)
+            $("#insertprojectid").val(result[0].project_id)
+        }
+    });
+</script>
 <div class="wrapper">
     <?php include('../components/Siderbar.php'); ?>
     <div class="content-wrapper">
@@ -14,7 +41,7 @@ include('../components/header.php');
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row">
-                    <h2 class="m-0">Project <?php echo $projectname ?></h2>
+                    <h2 class="m-0">Project <?php echo $projectname  ?></h2>
                     <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
                         <li class="breadcrumb-item active">Project </li>

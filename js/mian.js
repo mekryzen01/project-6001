@@ -23,6 +23,10 @@ $(document).ready(function () {
     });
 });
 
+window.addEventListener('beforeunload', function (e) {
+    localStorage.removeItem('ProjectID');
+});
+
 
 function Logout() {
     Swal.fire({
