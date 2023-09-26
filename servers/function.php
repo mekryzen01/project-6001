@@ -1,133 +1,6 @@
 <?php
 include('connect.php');
-function ConvertToThaiDate($value, $short = '1', $need_time = '1', $need_time_second = '0')
-{
-    $date_arr = explode(' ', $value);
-    $date = $date_arr[0];
-    if (isset($date_arr[1])) {
-        $time = $date_arr[1];
-    } else {
-        $time = '';
-    }
-
-    $value = $date;
-    if ($value != "0000-00-00" && $value != '') {
-        $x = explode("-", $value);
-        if ($short == false)
-            $arrMM = array(1 => "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม");
-        else
-            $arrMM = array(1 => "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค.");
-        // return $x[2]." ".$arrMM[(int)$x[1]]." ".($x[0]>2500?$x[0]:$x[0]+543);
-        if ($need_time == '1') {
-            if ($need_time_second == '1') {
-                $time_format = $time != '' ? date('H:i:s น.', strtotime($time)) : '';
-            } else {
-                $time_format = $time != '' ? date('H:i น.', strtotime($time)) : '';
-            }
-        } else {
-            $time_format = '';
-        }
-
-        return (int)$x[2] . " " . $arrMM[(int)$x[1]] . " " . ($x[0] > 2500 ? $x[0] : $x[0] + 543) . " " . $time_format;
-    } else
-        return "";
-}
-// (central function) //
-function generateNewId($db, $table)
-{
-    // 1. ดึงวันที่ปัจจุบัน
-    $date = date("dmY"); // วันที่ปัจจุบันในรูปแบบ ddmmyyyy
-    // 2. ดึงตัวเลขล่าสุดจากฐานข้อมูล
-    $stmt = $db->query("SELECT MAX(product_id) as max_id FROM {$table} ");
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    $lastNumber = isset($result['max_id']) ? substr($result['max_id'], -4) : "0000"; // ดึงตัวเลขที่อยู่หลังวันที่
-    // 3. เพิ่มตัวเลขทีละหนึ่ง
-    $newNumber = str_pad((int)$lastNumber + 1, 4, '0', STR_PAD_LEFT); // ตัวเลขใหม่ที่เพิ่มขึ้นมา 1 และมี 4 หลัก
-    // 4. รวมวันที่ปัจจุบันกับตัวเลขใหม่เพื่อสร้าง ID ใหม่
-    $newId = $date . $newNumber;
-
-    return $newId;
-}
-function generateNewProject($db, $table)
-{
-    // 1. ดึงวันที่ปัจจุบัน
-    $date = date("dmY"); // วันที่ปัจจุบันในรูปแบบ ddmmyyyy
-    // 2. ดึงตัวเลขล่าสุดจากฐานข้อมูล
-    $stmt = $db->query("SELECT MAX(project_id) as max_id FROM {$table} WHERE project_id LIKE '{$date}%'");
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    $lastNumber = isset($result['max_id']) ? substr($result['max_id'], -4) : "0000"; // ดึงตัวเลขที่อยู่หลังวันที่
-    // 3. เพิ่มตัวเลขทีละหนึ่ง
-    $newNumber = str_pad((int)$lastNumber + 1, 4, '0', STR_PAD_LEFT); // ตัวเลขใหม่ที่เพิ่มขึ้นมา 1 และมี 4 หลัก
-    // 4. รวมวันที่ปัจจุบันกับตัวเลขใหม่เพื่อสร้าง ID ใหม่
-    $newId = $date . $newNumber;
-    return $newId;
-}
-//ดึงข้อมูล ตาม id
-function fetchData($db, $query, $paramName, $paramValue)
-{
-    $stmt = $db->prepare($query);
-    $stmt->bindParam($paramName, $paramValue, PDO::PARAM_INT);
-    $stmt->execute();
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-}
-
-//ดึงข้อมูลทั้งหมด
-function fetchDataAll($db, $query)
-{
-    $stmt = $db->prepare($query);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-//เพิ่มข้อมูล
-function insertIntoDatabase($db, $table, $data)
-{
-    $fields = implode(", ", array_keys($data));
-    $placeholders = ":" . implode(", :", array_keys($data));
-
-    $sql = "INSERT INTO $table ($fields) VALUES ($placeholders)";
-
-    try {
-        $stmt = $db->prepare($sql);
-
-        foreach ($data as $key => $value) {
-            $stmt->bindValue(":$key", $value);
-        }
-
-        if ($stmt->execute()) {
-            return ['status' => 200, 'message' => 'Data inserted successfully.'];
-        } else {
-            return ['status' => 500, 'message' => 'Error inserting data.'];
-        }
-    } catch (PDOException $e) {
-        return ['status' => 500, 'message' => 'Database error: ' . $e->getMessage()];
-    }
-}
-// update stock where product_id
-function updateProductInDatabase($db, $productId, $data)
-{
-    $setFields = [];
-    foreach ($data as $key => $value) {
-        $setFields[] = "$key = :$key";
-    }
-    $sql = "UPDATE stock SET " . implode(", ", $setFields) . " WHERE product_id = :product_id";
-
-    try {
-        $stmt = $db->prepare($sql);
-        $stmt->bindValue(':product_id', $productId, PDO::PARAM_INT);
-        foreach ($data as $key => $value) {
-            $stmt->bindValue(":$key", $value);
-        }
-
-        if ($stmt->execute()) {
-            return ['status' => 200, 'message' => 'Product updated successfully.'];
-        } else {
-            return ['status' => 500, 'message' => 'Error updating product.'];
-        }
-    } catch (PDOException $e) {
-        return ['status' => 500, 'message' => 'Database error: ' . $e->getMessage()];
-    }
-}
-// (central function) //
+include('./central_function.php');
 // ดึง project by emp_id      
 if (isset($_POST['function']) && $_POST['function'] == 'get_projectbyid') {
     $empId = $_POST['emp_id'];
@@ -489,4 +362,81 @@ if (isset($_POST['function']) && $_POST['function'] == 'check_login') {
         // รหัสผ่านไม่ถูกต้อง
         echo json_encode(array("statusCode" => 201));
     }
+}
+if (isset($_POST['function']) && $_POST['function'] == 'insert_reportcost') {
+    $today = $_POST['today'];
+    $insertprojectid = $_POST['insertprojectid'];
+    $insertprojectname = $_POST['insertprojectname'];
+    $empname = $_POST['empname'];
+    $addIdValues = $_POST['addIdValues'];
+    $productNames = $_POST['productNames'];
+    $productValues = $_POST['productValues'];
+    $productTotal = $_POST['productTotal'];
+    $productCosts = $_POST['productCosts'];
+    $projcost_id = generateNumber($db, 'projcost_id', 'projcost_hd');
+
+    $projcost_saveids = [];
+
+    foreach ($addIdValues as $index => $value) {
+        $productName = $productNames[$index];
+        $productValue = $productValues[$index];
+        $total = $productTotal[$index];
+        $cost = $productCosts[$index];
+
+        $data = [
+            'projcost_saveid' => generateNumber5($db, 'projcost_saveid', 'projcost_desc'),
+            'product_id' => $productName,
+            'desc_unit' => $productValue,
+            'product_cost' => $cost,
+            'desc_value' => $total,
+            'project_id' => $insertprojectid,
+        ];
+        $results = insertIntoDatabase($db, 'projcost_desc', $data);
+
+        if ($results['status'] == 200) {
+            $projcost_saveids[] = $data['projcost_saveid'];
+        }
+    }
+
+    if (!empty($projcost_saveids)) {
+        $dataproject = fetchData($db, "SELECT * FROM project WHERE project_id = :id", ":id", $insertprojectid);
+        $data_to_projcost_hd = [
+            'projcost_id' => $projcost_id,
+            'projcost_saveid' => implode(',', $projcost_saveids), // รวม projcost_saveid เป็น string ด้วย comma
+            'projcost_save' => $today,
+            'project_id' => $dataproject['project_id'],
+            'projcost_value' => $dataproject['project_value'],
+            'projcost_status' => 1,
+            'projcost_date' => $today,
+        ];
+        $results = insertIntoDatabase($db, 'projcost_hd', $data_to_projcost_hd);
+
+        if ($results['status'] == 200) {
+            echo json_encode(array('status' => 200, 'message' => 'Success'));
+        } else {
+            echo json_encode(array('status' => 500, 'message' => 'Failed to insert into projcost_hd'));
+        }
+    } else {
+        echo json_encode(array('status' => 500, 'message' => 'No projcost_saveid generated'));
+    }
+}
+
+if (isset($_POST['function']) && $_POST['function'] == 'get_desc') {
+    $projectID = $_POST['projectID'];
+    $res = fetchDataAllID($db, "SELECT * FROM projcost_desc WHERE project_id = :id", ":id", $projectID);
+    $results = [];
+    foreach ($res as $row) {
+        $datastock = fetchData($db, "SELECT * FROM stock WHERE product_id = :id", ":id", $row['product_id']);
+        $results[] = array(
+            'product_id' => $row['product_id'],
+            'product_name' => $datastock['product_name'],
+            'product_counting' => $datastock['product_counting'],
+            'desc_unit' => $row['desc_unit'],
+            'product_cost' => $datastock['product_cost'],
+            'desc_value' => $row['desc_value']
+        );
+        
+    }
+
+    echo json_encode($results);
 }

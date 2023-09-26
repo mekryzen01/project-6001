@@ -23,7 +23,7 @@ include('../components/header.php');
             </div>
         </div>
         <div class="content">
-            <div class="card project">
+            <div class="card project mb-3">
                 <div class="card-header">
                     <h3>รายละเอียด</h3>
                 </div>
@@ -73,7 +73,30 @@ include('../components/header.php');
                     <div class="box mt-3">
                         <div class="title">ข้อมูลค่าใช้จ่ายโครงการ</div>
                         <div class="content-box">
-                            <button type="button" class="btn btn-primary" onclick="showModalprojectcost()">เพิ่มค่าใช้จ่าย</button>
+                            <button type="button" class="btn btn-primary mb-2" onclick="showModalprojectcost()">เพิ่มค่าใช้จ่าย</button>
+                            <input type="hidden" name="pid" id="pid">
+                            <table id="datadesc" class="table table-striped table-bordered" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>รหัสสินค้า</th>
+                                        <th>รายการสินค้า</th>
+                                        <th>หน่วยนับ</th>
+                                        <th>จำนวน</th>
+                                        <th>ราคา/หน่วย</th>
+                                        <th>จำนวนเงิน</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- ข้อมูลจากฐานข้อมูล -->
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th colspan="5" style="text-align:right">รวมมูลค่าสินค้า:</th>
+                                        <th></th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
                         </div>
                     </div>
                 </div>
@@ -82,7 +105,8 @@ include('../components/header.php');
 
             </div>
         </div>
-        <div class="" id="statusproject"></div>
+
+
 
 
 

@@ -7,6 +7,7 @@ $(document).ready(function () {
     fetchData("get_project_status2", { emp_id: localStorage.getItem("emp_id") });
     fetchData("get_stock");
     fetchData("get_customer");
+    fetchData("get_desc", { projectID: localStorage.getItem("ProjectID") });
 
     // Event Listeners
     $(add_button).click(function (e) {
@@ -102,35 +103,39 @@ $(document).ready(function () {
         const empname = $('#empname').val();
         let productTotal = productValues.map((value, index) => value * productCosts[index]);
 
-        console.log(today,
-            insertprojectid,
-            insertprojectname,
-            empname,
-            addIdValues, productNames, productValues , productTotal);
-        //     $.ajax({
-        //         type: "POST",
-        //         url: "../servers/function",
-        //         data: {
-        //             function: "insert_project",
-        //             ProjectName: ProjectName,
-        //             projectStart: projectStart,
-        //             projectclose: projectclose,
-        //             Custormer: Custormer,
-        //             Projectvalue: Projectvalue,
-        //             status: status,
-        //             emp_id: emp_id
-        //         },
-        //         success: function (response) {
-        //             // Handle success response
-        //             Swal.fire('Success!', 'Your product has been added.', 'success').then(() => {
-        //                 window.location.reload()
-        //             });
-        //         },
-        //         error: function (error) {
-        //             Swal.fire('Error!', 'There was an error adding your product.', 'error');
-        //         }
-        //     });
-        //     $('#insertprojectcostModal').modal('hide');
+        // console.log(today,
+        //     insertprojectid,
+        //     insertprojectname,
+        //     empname,
+        //     addIdValues, productNames, productValues, productTotal);
+        $.ajax({
+            type: "POST",
+            url: "../servers/function",
+            data: {
+                function: "insert_reportcost",
+                today: today,
+                insertprojectid: insertprojectid,
+                insertprojectname: insertprojectname,
+                empname: empname,
+                addIdValues: addIdValues,
+                productNames: productNames,
+                productValues: productValues,
+                productTotal: productTotal,
+                productCosts: productCosts
+            },
+            success: function (response) {
+                let res = JSON.parse(response)
+                if (res.status == 200) {
+                    Swal.fire('Success!', 'Your product has been added.', 'success').then(() => {
+                        window.location.reload()
+                    });
+                }
+            },
+            error: function (error) {
+                Swal.fire('Error!', 'There was an error adding your product.', 'error');
+            }
+        });
+        $('#insertprojectcostModal').modal('hide');
     });
     const today = new Date();
     const formattedDate = today.toISOString().split('T')[0];
@@ -163,6 +168,7 @@ function fetchData(funcName, data = {}) {
                 } else {
                     $('#countproject').html(0);
                 }
+                localStorage.setItem("ProjectID", result[0].project_id)
                 $("#nameproject").html(result[0].project_name)
                 $("#insertprojectname").val(result[0].project_name)
                 $("#statusbyid").html(result[0].project_status)
@@ -174,6 +180,7 @@ function fetchData(funcName, data = {}) {
                 $("#projectvalue").html(result[0].project_value)
                 $("#projectid").html(result[0].project_id)
                 $("#insertprojectid").val(result[0].project_id)
+                // $("#pid").val(result[0].project_id)
                 // สร้าง HTML สำหรับ Progress Spinners ในแต่ละแถวของ result
                 $('#project-table').DataTable({
                     data: result,
@@ -271,6 +278,42 @@ function fetchData(funcName, data = {}) {
                         }
                     }
                     ]
+                });
+            } else if (funcName === "get_desc") {
+                $('#datadesc').DataTable({
+                    data: result,
+                    columns: [
+                        { data: 'product_id' },
+                        { data: 'product_name' },
+                        { data: 'product_counting' },
+                        { data: 'desc_unit' },
+                        {
+                            data: 'product_cost',
+                            render: $.fn.dataTable.render.number(',', '.', 2)
+                        },
+                        {
+                            data: 'desc_value',
+                            render: $.fn.dataTable.render.number(',', '.', 2)
+                        }
+                    ],
+                    "paging": true,
+                    "ordering": true,
+                    "info": true,
+                    "responsive": true,
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Thai.json"
+                    },
+                    "footerCallback": function (row, data, start, end, display) {
+                        var api = this.api(), data;
+                        var total = api
+                            .column(5)
+                            .data()
+                            .reduce(function (a, b) {
+                                return parseFloat(a.toString().replace(/,/g, '')) + parseFloat(b.toString().replace(/,/g, ''));
+                            }, 0);
+
+                        $(api.column(5).footer()).html(total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                    }
                 });
             }
         },
