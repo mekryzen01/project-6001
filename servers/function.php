@@ -49,7 +49,7 @@ if (isset($_POST['function']) && $_POST['function'] == 'get_projectbyid') {
     $stm->bindParam(':emp_id', $empId, PDO::PARAM_INT);
     $stm->bindParam(':id', $projectID, PDO::PARAM_INT);
     $stm->execute();
-    
+
     $projects = $stm->fetchAll(PDO::FETCH_ASSOC);
     $results = [];
     $countData = count($projects);
@@ -246,6 +246,8 @@ if (isset($_POST['function']) && $_POST['function'] == 'get_employeebyid') {
         $results[] = array(
             "emp_id" => $employee['emp_id'],
             "fullname" => $employee['emp_name'] . "" . $employee['emp_sername'],
+            "emp_name" => $employee['emp_name'],
+            "emp_sername" => $employee['emp_sername'],
             "emp_address" => $employee['emp_address'],
             "emp_tumbon" => $datadistricts['name_th'],
             "emp_aumpher" => $dataamphure['name_th'],
@@ -255,6 +257,7 @@ if (isset($_POST['function']) && $_POST['function'] == 'get_employeebyid') {
             "emp_email" => $employee['emp_email'],
             "emp_startwork" => ConvertToThaiDate($employee['emp_startwork']),
             "emp_position" => $dataposition['position_name'],
+            "imageuser" => $employee['emp_image'],
             "emp_status" => $statusname,
             "countdata" => $countData
         );
@@ -481,4 +484,55 @@ if (isset($_POST['function']) && $_POST['function'] == 'get_desc') {
     }
 
     echo json_encode($results);
+}
+if (isset($_POST['function']) && $_POST['function'] == 'edit_product_desc') {
+    $productID = $_POST['product_id'];
+    $productcost = $_POST['product_cost'];
+
+    try {
+        // เริ่มธุรกรรม
+        $db->beginTransaction();
+
+        $stm = $db->prepare("UPDATE projcost_desc SET product_cost = :product_cost WHERE product_id = :product_id");
+        $stm->bindParam(":product_cost", $productcost);
+        $stm->bindParam(":product_id", $productID);
+        $stm->execute();
+
+        $stmt = $db->prepare("UPDATE projcost_desc SET desc_value = desc_unit * product_cost WHERE product_id = :product_id");
+        $stmt->bindParam(":product_id", $productID);
+        $stmt->execute();
+
+        // ยืนยันธุรกรรม
+        $db->commit();
+    } catch (Exception $e) {
+        // มีข้อผิดพลาดเกิดขึ้น, ยกเลิกธุรกรรม
+        $db->rollBack();
+        // จัดการหรือรายงานข้อผิดพลาดตามความจำเป็น
+        echo "Error: " . $e->getMessage();
+    }
+}
+if (isset($_POST['function']) && $_POST['function'] == "get_total_cost_emp") {
+    $results = fetchDataAll($db, "SELECT project_id, SUM(desc_value) as totalall FROM projcost_desc GROUP BY project_id");
+    $empTotals = []; // สร้าง array เพื่อเก็บผลรวมของแต่ละ empid
+
+    foreach ($results as $row) {
+        $res = fetchDataAllID($db, "SELECT * FROM project WHERE project_id= :id", ":id", $row['project_id']);
+        foreach ($res as $newrow) {
+            $emp_id = $newrow['emp_id'];
+            if (!isset($empTotals[$emp_id])) {
+                $empTotals[$emp_id] = 0; // ถ้ายังไม่มี empid ใน array, ตั้งค่าเริ่มต้นเป็น 0
+            }
+            $empTotals[$emp_id] += $row['totalall']; // เพิ่มผลรวม
+        }
+    }
+
+    $data = [];
+    foreach ($empTotals as $emp_id => $total) {
+        $data[] = [
+            "emp_id" => $emp_id,
+            "sumtotal" => number_format($total,2)
+        ];
+    }
+
+    echo json_encode($data);
 }

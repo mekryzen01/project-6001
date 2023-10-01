@@ -66,7 +66,7 @@
                     <div class="card ds border-dark card-grey">
                         <div class="card-body ds">
                             <div>
-                                <h3 id="countproject"></h3>
+                                <h3 id="totalall"></h3>
                                 <b>Total cost</b>
                             </div>
                             <div class="card-icon">

@@ -6,6 +6,7 @@ $(document).ready(function () {
     fetchData("get_project_status1", { emp_id: localStorage.getItem("emp_id") });
     fetchData("get_project_status2", { emp_id: localStorage.getItem("emp_id") });
     fetchData("get_stock");
+    fetchData("get_total_cost_emp");
     // fetchData("get_customer");
     fetchData("get_desc", { projectID: localStorage.getItem("ProjectID") });
 
@@ -172,8 +173,8 @@ function fetchData(funcName, data = {}) {
             // console.log(result);
             if (funcName === "get_projectbyempid") {
                 // console.log(result[0].countdata);
-                if (result && result.length > 0 && result.countdata != null) {
-                    $('#countproject').html(result.countdata);
+                if (result && result.length > 0 && result[0].countdata != null) {
+                    $('#countproject').html(result[0].countdata);
                 } else {
                     $('#countproject').html(0);
                 }
@@ -220,8 +221,8 @@ function fetchData(funcName, data = {}) {
                     },
                     ]
                 });
-               
-               
+
+
             } else if (funcName === "get_project_status1") {
                 if (result[0] != null) {
                     $('#status1').html(result[0].countdata)
@@ -300,6 +301,8 @@ function fetchData(funcName, data = {}) {
                         $(api.column(5).footer()).html(total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
                     }
                 });
+            }else if(funcName ==='get_total_cost_emp'){
+                $('#totalall').html(result[0].sumtotal)
             }
         },
         error: function (error) {
@@ -409,7 +412,18 @@ function editProduct(productId) {
                         },
                         success: function (response) {
                             Swal.fire('Updated!', 'Your product has been updated.', 'success').then(() => {
-                                window.location.reload()
+                                $.ajax({
+                                    type: "POST",
+                                    url: "../servers/function",
+                                    data: {
+                                        function: "edit_product_desc",
+                                        product_id: productId,
+                                        product_cost: result.value.productValue
+                                    },
+                                    success: function (response) {
+                                        window.location.reload()
+                                    }
+                                })
                             });
                         },
                         error: function (error) {
