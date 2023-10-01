@@ -318,7 +318,7 @@ if (isset($_POST['function']) && $_POST['function'] == 'insert_stock') {
     $emp_id = $_POST['emp_id'];
 
     $data = [
-        'product_id' => generateNewId($db, "stock"),
+        'product_id' => generateNumber5($db,"product_id", "stock"),
         'product_name' => $productName,
         'product_counting' => $productCounting,
         'product_cost' => $productValue,

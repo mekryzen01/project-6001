@@ -21,7 +21,7 @@
             <div class="row justify-content-end my-3">
                 <div class="col-4 col-md-2 col-lg-2">
                     <div class="text-end">
-                        <button class="btn btn-primary form-control"><i class="fa-solid fa-plus"></i>Add</button>
+                        <button class="btn btn-primary product form-control"><i class="fa-solid fa-plus"></i>Add</button>
                     </div>
                 </div>
             </div>
@@ -68,7 +68,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" id="saveData">Save</button>
+                            <button type="button" class="btn btn-primary " id="saveData">Save</button>
                         </div>
                     </div>
                 </div>

@@ -9,7 +9,45 @@ $(document).ready(function () {
     fetchData("get_total_cost_emp");
     // fetchData("get_customer");
     fetchData("get_desc", { projectID: localStorage.getItem("ProjectID") });
+    function showModal() {
+        $('#insertModal').modal('show');
+    }
+    $('.product').click(function () {
+        showModal();
+    });
+    $('#saveData').click(function () {
+        // Get data from form
+        const productName = $('#productName').val();
+        const productCounting = $('#productCounting').val();
+        const productValue = $('#productValue').val();
+        const emp_id = localStorage.getItem("emp_id")
 
+        // Send data to server using AJAX
+        $.ajax({
+            type: "POST",
+            url: "../servers/function",
+            data: {
+                function: "insert_stock",
+                product_name: productName,
+                product_counting: productCounting,
+                product_value: productValue,
+                emp_id: emp_id
+            },
+            success: function (response) {
+                // Handle success response
+                Swal.fire('Success!', 'Your product has been added.', 'success').then(() => {
+                    window.location.reload()
+                });
+            },
+            error: function (error) {
+                // Handle error response
+                Swal.fire('Error!', 'There was an error adding your product.', 'error');
+            }
+        });
+
+        // Close modal
+        $('#insertModal').modal('hide');
+    });
     // Event Listeners
     $(add_button).click(function (e) {
         e.preventDefault();
@@ -301,7 +339,7 @@ function fetchData(funcName, data = {}) {
                         $(api.column(5).footer()).html(total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
                     }
                 });
-            }else if(funcName ==='get_total_cost_emp'){
+            } else if (funcName === 'get_total_cost_emp') {
                 $('#totalall').html(result[0].sumtotal)
             }
         },

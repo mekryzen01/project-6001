@@ -19,9 +19,8 @@ $(document).ready(function () {
                     // Handle employee data
                 } else if (funcName === "get_employeebyid") {
                     // Handle employeebyid data
-
-                    // console.log(res);
                     $('#show_image').attr('src', res[0].imageuser).show();
+                    $('#imageUser').attr('src', res[0].imageuser).show();
                     $('#nameusershow').html(res[0].emp_name);
                     $('#sernameshow').html(res[0].emp_sername);
                     $('#Addressuser').html(res[0].emp_address);

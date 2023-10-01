@@ -6,7 +6,7 @@
         </li>
     </ul>
     <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><img src="../images/logoscit.jpg" alt="imageUser" class="brand-image img-circle elevation-3" style="opacity: .8"> </li>
+        <li class="nav-item"><img src="" alt="imageUser" id="imageUser" class="brand-image img-circle elevation-3" style="opacity: .8"> </li>
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="fullnameNav">
             </a>
