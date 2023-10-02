@@ -243,6 +243,8 @@ function fetchData(funcName, data = {}) {
                                 $(td).addClass('status2');
                             } else if (cellData == "ยกเลิก") {
                                 $(td).addClass('status3');
+                            } else if(cellData == "เกินกำหนดการ"){
+                                $(td).addClass('status4')
                             }
                         }
                     },

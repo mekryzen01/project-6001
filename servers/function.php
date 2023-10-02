@@ -23,6 +23,8 @@ if (isset($_POST['function']) && $_POST['function'] == 'get_projectbyempid') {
             $statusname = "อยู่ระหว่างดำเนินการ";
         } elseif ($project['project_status'] == 2) {
             $statusname = "ปิดโครงการ";
+        } else if ($project['project_status'] == 3) {
+            $statusname = "เกินกำหนดการ";
         } else {
             $statusname = "ยกเลิก";
         }
@@ -318,7 +320,7 @@ if (isset($_POST['function']) && $_POST['function'] == 'insert_stock') {
     $emp_id = $_POST['emp_id'];
 
     $data = [
-        'product_id' => generateNumber5($db,"product_id", "stock"),
+        'product_id' => generateNumber5($db, "product_id", "stock"),
         'product_name' => $productName,
         'product_counting' => $productCounting,
         'product_cost' => $productValue,
@@ -530,9 +532,81 @@ if (isset($_POST['function']) && $_POST['function'] == "get_total_cost_emp") {
     foreach ($empTotals as $emp_id => $total) {
         $data[] = [
             "emp_id" => $emp_id,
-            "sumtotal" => number_format($total,2)
+            "sumtotal" => number_format($total, 2)
         ];
     }
 
     echo json_encode($data);
+}
+if (isset($_POST['function']) && $_POST['function'] == "Update_personal_emp") {
+    $empID = $_POST['emp_id'];
+    $newnameuser = $_POST['newnameuser'];
+    $newsername = $_POST['newsername'];
+
+    // ตรวจสอบว่ามีการอัปโหลดไฟล์รูปภาพ
+    if (isset($_FILES['newimage'])) {
+        $file = $_FILES['newimage'];
+
+        // ตรวจสอบข้อผิดพลาดในการอัปโหลด
+        if ($file['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = '../images/';
+            $newImageName = $file['name'];
+            $fullpath = $uploadDir.$newImageName;
+            // ย้ายไฟล์ไปยังไดเรกทอรีที่ต้องการ
+            move_uploaded_file($file['tmp_name'], $uploadDir . $newImageName);
+        } else {
+            $response = array('status' => 400, 'message' => 'File upload error');
+            echo json_encode($response);
+            exit; // หยุดการทำงาน
+        }
+    }
+
+    $stm = $db->prepare("UPDATE employee SET emp_name = :newnames , emp_sername = :newsername , emp_image = :newimage WHERE emp_id = :id");
+    $stm->bindParam(":newnames", $newnameuser);
+    $stm->bindParam(":newsername", $newsername);
+    $stm->bindParam(":newimage", $fullpath);
+    $stm->bindParam(":id", $empID);
+    if ($stm->execute()) {
+        echo json_encode(["status" => 200]);
+    } else {
+        echo json_encode(["status" => 201]);
+    }
+}
+if (isset($_POST['function']) && $_POST['function'] == "Update_address_emp") {
+    $empID = $_POST['emp_id'];
+    $newAddress = $_POST['newAddress'];
+    $newprovince = $_POST['newprovince'];
+    $newamphur = $_POST['newamphur'];
+    $newdistrict = $_POST['newdistrict'];
+    $zipcode = $_POST['zipcode'];
+
+    $stm = $db->prepare("UPDATE employee SET emp_address = :newaddress ,emp_province = :newprovince ,emp_aumpher = :newampher , emp_tumbon = :newtumbon ,emp_post = :newzip WHERE emp_id = :id");
+    $stm->bindParam(":newaddress", $newAddress);
+    $stm->bindParam(":newprovince", $newprovince);
+    $stm->bindParam(":newampher", $newamphur);
+    $stm->bindParam(":newtumbon", $newdistrict);
+    $stm->bindParam(":newzip", $zipcode);
+    $stm->bindParam(":id", $empID);
+    if ($stm->execute()) {
+        echo json_encode(["status" => 200]);
+    } else {
+        echo json_encode(["status" => 201]);
+    }
+}
+if (isset($_POST['function']) && $_POST['function'] == "Update_user_emp") {
+    $empID = $_POST['emp_id'];
+    $emailnew = $_POST['email_emp'];
+    $passwordnew = $_POST['password_emp'];
+
+    $hashpass = password_hash($passwordnew, PASSWORD_DEFAULT);
+
+    $stm = $db->prepare("UPDATE employee SET emp_email = :newemail , emp_password = :newpassword WHERE emp_id = :id");
+    $stm->bindParam(":newemail", $emailnew);
+    $stm->bindParam(":newpassword", $hashpass);
+    $stm->bindParam(":id", $empID);
+    if ($stm->execute()) {
+        echo json_encode(["status" => 200]);
+    } else {
+        echo json_encode(["status" => 201]);
+    }
 }

@@ -218,6 +218,10 @@ html {
   background-color: #ff6666; /* สีแดงอ่อน */
   color: #fff;
 }
+.status4 {
+  background-color: #f9f504; 
+  color: #fff;
+}
 .progress-spinner {
   display: flex;
   justify-content: space-between;

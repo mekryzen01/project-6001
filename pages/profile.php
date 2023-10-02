@@ -20,17 +20,18 @@
             </div>
         </div>
         <div class="content">
-            <div class="row">
-                <div class="text-end">
-                    <button type="button" class="btn btn-primary showprofile">
-                        แก้ไข
-                    </button>
-                </div>
-            </div>
+
             <div class="row mt-2">
                 <div class="box mt-3">
                     <div class="title">ข้อมูลส่วนตัว</div>
                     <div class="content-box">
+                        <div class="row">
+                            <div class="text-end">
+                                <button type="button" class="btn btn-primary showprofile">
+                                    แก้ไข
+                                </button>
+                            </div>
+                        </div>
                         <div class="row justify-content-center">
                             <div class="col-12 col-md-4 col-lg-4">
                                 <img id="show_image" class="show_image" src="" alt="Selected Image" style="display:none; width: 100%; height: 100%;  ">
@@ -51,10 +52,17 @@
                 <div class="box mt-3">
                     <div class="title">ข้อมูลที่อยู่</div>
                     <div class="content-box">
+                        <div class="row">
+                            <div class="text-end">
+                                <button type="button" class="btn btn-primary editaddressemp">
+                                    แก้ไข
+                                </button>
+                            </div>
+                        </div>
                         <div class="row justify-content-center mt-2">
                             <div class="col-12 col-md-8 col-lg-8">
                                 <label for="">ที่อยู่ :</label>
-                                <p  id="Addressuser" class="Addressuser"></p>
+                                <p id="Addressuser" class="Addressuser"></p>
                             </div>
                         </div>
                         <div class="row justify-content-center mt-2">
@@ -82,6 +90,13 @@
                 <div class="box mt-3">
                     <div class="title">ข้อมูลผู้ใช้</div>
                     <div class="content-box">
+                        <div class="row">
+                            <div class="text-end">
+                                <button type="button" class="btn btn-primary editusers">
+                                    แก้ไข
+                                </button>
+                            </div>
+                        </div>
                         <div class="row justify-content-center mt-2">
                             <div class="col-12 col-md-8 col-lg-8">
                                 <label for="">email :</label>
@@ -108,9 +123,9 @@
                                 <div class="content-box">
                                     <div class="row justify-content-center">
                                         <div class="col-12 col-md-12 col-lg-12">
-                                            <img id="uploaded_image" src="#" alt="Selected Image" style="display:none; width: 75%; height: 75%;  ">
+                                            <img id="uploaded_image_edit" src="#" alt="Selected Image" style="display:none; width: 75%; height: 75%;  ">
                                             <label for="">รูปภาพ :</label>
-                                            <input type="file" id="imageInput" onchange="displayImage(this)" class="form-control">
+                                            <input type="file" id="imageedit" onchange="displayImage(this)" class="form-control">
                                         </div>
                                     </div>
                                     <div class="row justify-content-center mt-2">
@@ -122,10 +137,29 @@
                                             <label for="">นามสกุล :</label>
                                             <input type="text" name="sername" id="sername" class="form-control">
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="updatedatapersonal">Save</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">ข้อมูลส่วนตัว</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <!-- Modal body -->
+                        <div class="modal-body">
                             <div class="box mt-3">
                                 <div class="title">ข้อมูลที่อยู่</div>
                                 <div class="content-box">
@@ -163,6 +197,26 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="updatedataAddress">Save</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">ข้อมูลส่วนตัว</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <!-- Modal body -->
+                        <div class="modal-body">
                             <div class="box mt-3">
                                 <div class="title">ข้อมูลผู้ใช้</div>
                                 <div class="content-box">
