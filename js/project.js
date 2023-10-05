@@ -9,12 +9,15 @@ $(document).ready(function () {
     fetchData("get_total_cost_emp");
     // fetchData("get_customer");
     fetchData("get_desc", { projectID: localStorage.getItem("ProjectID") });
-    function showModal() {
-        $('#insertModal').modal('show');
-    }
+  
     $('.product').click(function () {
         showModal();
     });
+  
+    $('.btn-primary').click(function () {
+        showModalproject();
+    });
+    // บันทึกข้อมูลสินค้า
     $('#saveData').click(function () {
         // Get data from form
         const productName = $('#productName').val();
@@ -76,9 +79,8 @@ $(document).ready(function () {
         deleteProject(projectId);
     });
 
-    $('.btn-primary').click(function () {
-        showModalproject();
-    });
+  
+    //ดึงข้อมูลลูกค้า
     $.ajax({
         url: '../servers/function',
         type: 'POST',
@@ -89,6 +91,7 @@ $(document).ready(function () {
             $('#Custormer').append(data);
         }
     });
+    //บันทึกข้อมูลโครงการ
     $('#saveprojectData').click(function () {
         const ProjectName = $('#ProjectName').val();
         const projectStart = $('#projectStart').val();
@@ -123,7 +126,7 @@ $(document).ready(function () {
         });
         $('#insertprojectModal').modal('hide');
     });
-
+// บันทึกค่าใช้จ่ายโครงการ
     $('#savereportData').click(function () {
         let addIdValues = [];
         $('input[name="add_id[]"]').each(function () {
@@ -194,6 +197,9 @@ $(document).ready(function () {
     // ... ฟังก์ชันอื่น ๆ ของคุณ ...
 
 });
+function showModal() {
+    $('#insertModal').modal('show');
+}
 function showModalprojectcost() {
     $('#insertprojectcostModal').modal('show');
 }
@@ -243,7 +249,7 @@ function fetchData(funcName, data = {}) {
                                 $(td).addClass('status2');
                             } else if (cellData == "ยกเลิก") {
                                 $(td).addClass('status3');
-                            } else if(cellData == "เกินกำหนดการ"){
+                            } else if (cellData == "เกินกำหนดการ") {
                                 $(td).addClass('status4')
                             }
                         }

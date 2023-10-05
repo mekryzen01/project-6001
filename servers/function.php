@@ -77,7 +77,9 @@ if (isset($_POST['function']) && $_POST['function'] == 'get_projectbyid') {
             "project_name" => $project['project_name'],
             "cus_id" => $datacustomer['cus_name'] . " " . $datacustomer['cus_sername'],
             "project_start" => ConvertToThaiDate($project['project_start'], 0),
+            "normalstart" => $project['project_start'],
             "project_end" => ConvertToThaiDate($project['project_end'], 0),
+            "normalend" => $project['project_end'],
             "project_value" => $projectValue,
             "project_status" => $statusname,
             "employee" => $dataemployee['emp_name'] . " " . $dataemployee['emp_sername'],
@@ -551,7 +553,7 @@ if (isset($_POST['function']) && $_POST['function'] == "Update_personal_emp") {
         if ($file['error'] === UPLOAD_ERR_OK) {
             $uploadDir = '../images/';
             $newImageName = $file['name'];
-            $fullpath = $uploadDir.$newImageName;
+            $fullpath = $uploadDir . $newImageName;
             // ย้ายไฟล์ไปยังไดเรกทอรีที่ต้องการ
             move_uploaded_file($file['tmp_name'], $uploadDir . $newImageName);
         } else {
@@ -608,5 +610,34 @@ if (isset($_POST['function']) && $_POST['function'] == "Update_user_emp") {
         echo json_encode(["status" => 200]);
     } else {
         echo json_encode(["status" => 201]);
+    }
+}
+if (isset($_POST['function']) && $_POST['function'] == 'update_project') {
+    $projectID = $_POST['ProjectID'];
+    $ProjectNameedit = $_POST['ProjectNameedit'];
+    $Projectvalueedit = $_POST['Projectvalueedit'];
+    $projectStartedit = $_POST['projectStartedit'];
+    $projectcloseedit = $_POST['projectcloseedit'];
+    $Custormer = $_POST['Custormer'];
+
+    $stmt = $db->prepare("UPDATE project SET project_name = :pname ,cus_id = :cid ,project_start = :pstart ,project_end = :pend ,project_value = :pval WHERE project_id = :id");
+    $stmt->bindParam(":pname", $ProjectNameedit);
+    $stmt->bindParam(":cid", $Custormer);
+    $stmt->bindParam(":pstart", $projectStartedit);
+    $stmt->bindParam(":pend", $projectcloseedit);
+    $stmt->bindParam(":pval", $Projectvalueedit);
+    $stmt->bindParam(":id", $projectID);
+
+    if ($stmt->execute()) {
+        echo json_encode(["status" => 200]);
+    } else {
+        echo json_encode(["status" => 201]);
+    }
+}
+
+if (isset($_POST['function']) && $_POST['function'] == 'getselect_project') {
+    $res = fetchDataAll($db, "SELECT * FROM project");
+    foreach ($res as $row) {
+        echo "<option value='{$row['project_id']}'>{$row['project_name']}</option>";
     }
 }

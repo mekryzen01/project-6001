@@ -17,6 +17,16 @@ $("#fullnameNav").html(fullname)
 
 
 $(document).ready(function () {
+    $.ajax({
+        url:"../servers/function",
+        type: "POST",
+        data:{
+            function: "getselect_project"
+        },
+        success:function(res){
+            $('#projectreport').append(res);
+        }
+    })
     $('#toggleSidebar').click(function () {
         $('.sidebar').toggleClass('sidebar-collapsed');
         $('.content-wrapper').toggleClass('content-expanded');

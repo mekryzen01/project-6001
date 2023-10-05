@@ -32,6 +32,11 @@
                 </ul>
             </div>
         </li>
+        <li class="nav-item">
+            <a class="nav-link d-inline-block" style="font-size: 20px;" href="http://localhost/project-6001/pages/report">
+            <i class="fa-regular fa-file"></i><span class="menu-text"> Report</span>
+            </a>
+        </li>
     </ul>
 
 </aside>
