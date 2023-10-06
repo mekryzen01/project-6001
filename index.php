@@ -41,6 +41,10 @@
         <span class="px-2">or</span>
         <span class="border-top w-25 d-inline-block"></span>
     </div>
+    <div class="text-center">
+       <p>username : 621463022@crru.ac.th</p> 
+       <p>password : $Facebo7899</p> 
+    </div>
 
 </div>
 
